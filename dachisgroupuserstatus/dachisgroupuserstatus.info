@@ -2,6 +2,6 @@ name = Dachis Group User Status
 description = Current User Status Module
 package = Dachis Group
 core = 7.x
-configure = admin/dachisgroupuserstatus
+configure = admin/structure/dachisgroupuserstatus
 
 ;dependencies[] = services

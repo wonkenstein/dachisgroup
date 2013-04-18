@@ -2,19 +2,30 @@
 
 function dachisgroupuserstatus_menu() {
 
-	$items = array();
+  $items = array();
 
-	// Settings page.
-	$items['admin/dachisgroupuserstatus'] = array(
-		'title' => 'Dachis Group User Status Settings',
-		'description' => '',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('dachisgroupuserstatus_settings'),
-		'access callback' => 'user_access',
-		'access arguments' => array('dachis group user status settings access'),
-	);
+  // Settings page.
+  $items['admin/structure/dachisgroupuserstatus'] = array(
+    'title' => 'Dachis Group User Status Settings',
+    'description' => '',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('dachisgroupuserstatus_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('dachis group user status settings access'),
+  );
 
-	return $items;
+  $items['user/%user/dachisgroupuserstatus'] = array(
+    'title' => 'User Status',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('dachisgroupuserstatus_status_form', 1),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => '_dachisgroupuserstatus_access',
+    'access arguments' => array(1),
+    'weight' => 2,
+//    'file' => 'contact.pages.inc',
+  );
+
+  return $items;
 }
 
 
@@ -22,21 +33,137 @@ function dachisgroupuserstatus_menu() {
  * hook_permission
  */
 function dachisgroupuserstatus_permission() {
-	return array(
-		'view dachis group user status' => array(
-			'title' => t('View Dachis Group user status'),
-		),
-		'edit any dachis group user status' => array(
-			'title' => t('Edit any Dachis Group user status'),
-		),
-		'edit own dachis group user status' => array(
-			'title' => t('Edit own Dachis Group user status'),
-		),
-		'administer dachis group user status' => array(
-			'title' => t('Administer Dachis Group user status'),
-		),
-	);
+  return array(
+    'view dachis group user status' => array(
+      'title' => t('View Dachis Group user status'),
+    ),
+    'edit any dachis group user status' => array(
+      'title' => t('Edit any Dachis Group user status'),
+    ),
+    'edit own dachis group user status' => array(
+      'title' => t('Edit own Dachis Group user status'),
+    ),
+    'administer dachis group user status' => array(
+      'title' => t('Administer Dachis Group user status'),
+    ),
+  );
 }
+
+
+function _dachisgroupuserstatus_access($account) {
+
+  global $user;
+
+  if (user_access('edit any dachis group user status')) {
+    return true;
+  }
+
+  if ($account->uid == $user->uid && user_access('edit own dachis group user status')) {
+    return true;
+  }
+
+  return false;
+}
+
+
+function dachisgroupuserstatus_status_form($form, &$form_state, $account) {
+
+  $form = array();
+
+  $form['uid'] = array(
+    '#type' => 'hidden',
+    '#value' => $account->uid,
+  );
+
+  $form['status'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Status'),
+    '#maxlength' => 50,
+    '#required' => TRUE,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Update Status'),
+  );
+  return $form;
+}
+
+
+function dachisgroupuserstatus_status_form_submit($form, &$form_state) {
+
+//  drupal_set_message(print_r($form_state,1));
+  $res = dachisgroupuserstatus_status_save($form_state['values']);
+
+  if ($res) {
+    drupal_set_message(t('Your status has been updated!'));
+  }
+  else {
+    drupal_set_message(t('Error updating your status! Please try again.'), 'error');
+  }
+}
+
+
+function dachisgroupuserstatus_status_save($values) {
+
+  $insert_values = array(
+    'uid' => $values['uid'],
+    'status' => $values['status'],
+    'created' => REQUEST_TIME,
+  );
+  return db_insert('dachisgroupuserstatus')->fields($insert_values)->execute();
+}
+
+function dachisgroupuserstatus_get_current_status($uid) {
+  $values = array(
+    ':uid' => $uid,
+  );
+  $result = db_query("SELECT uid, status, created
+    FROM {dachisgroupuserstatus}
+    WHERE uid=:uid ORDER BY id DESC LIMIT 1", $values);
+
+  return $result->fetch();
+}
+
+function dachisgroupuserstatus_get_status_history($uid) {
+  $result = db_query_range('SELECT id, uid, status, created
+    FROM {dachisgroupuserstatus}
+    WHERE uid = :uid ORDER BY id DESC', 0, 10, array(':uid' => $uid));
+
+  return $result;
+}
+
+
+function dachisgroupuserstatus_block_info() {
+  $blocks['dachisgroupuserstatus_history'] = array(
+    'info' => t('Dachis Group User Status History'),
+  );
+  return $blocks;
+}
+
+function dachisgroupuserstatus_block_view($delta = '') {
+  // This example is adapted from node.module.
+  $block = array();
+
+  switch ($delta) {
+    case 'dachisgroupuserstatus_history':
+      $block['subject'] = t('User Status History');
+      $block['content'] = dachisgroupuserstatus_history_block();
+      break;
+  }
+  return $block;
+}
+
+function dachisgroupuserstatus_history_block() {
+  global $user;
+
+  $data = array(
+    'history' => dachisgroupuserstatus_get_status_history($user->uid),
+  );
+
+  return theme('dachisgroupuserstatus_history_block', $data);
+}
+
 
 
 /**
@@ -44,14 +171,71 @@ function dachisgroupuserstatus_permission() {
  */
 function dachisgroupuserstatus_settings() {
 
-	$form['dachisgroupuserstatus_status'] = array(
-		'#type' => 'textfield',
-		'#title' => t('Dachis Group User Status'),
-		'#default_value' => variable_get('dachisgroupuserstatus_status', '[STATUS]'),
-		'#description' => t('Dachis Group User Status Message'),
-	);
+  $form['dachisgroupuserstatus_status'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Dachis Group User Status'),
+    '#default_value' => variable_get('dachisgroupuserstatus_status', '[STATUS]'),
+    '#description' => t('Dachis Group User Status Message'),
+  );
 
-	return system_settings_form($form);
+  $form['dachisgroupuserstatus_setting'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show Dachis Group User Status on User Profile'),
+    '#default_value' => variable_get('dachisgroupuserstatus_setting', true),
+    '#description' => t(''),
+  );
+
+  return system_settings_form($form);
 }
 
 
+function dachisgroupuserstatus_user_view($account, $view_mode, $langcode) {
+
+  $status_setting = variable_get('dachisgroupuserstatus_setting', true);
+
+  if ($status_setting && user_access('view dachis group user status', $account)) {
+
+    $data = array(
+      'account' => $account,
+      'current_status' => dachisgroupuserstatus_get_current_status($account->uid),
+    );
+
+    $account->content['dachisgroupuserstatus'] = array(
+      '#type' => 'user_profile_category',
+      '#title' => t('Status'),
+      'status' => array(
+        '#type' => 'user_profile_item',
+        '#title' => '',
+        '#markup' => theme('dachisgroupuserstatus_current_status', $data),
+      ),
+      '#attributes' => array('class' => array('blog')),
+      '#weight' => 10,
+    );
+  }
+}
+
+
+/**
+ * Implements hook_theme().
+ *
+ * Defines the theming capabilities provided by this module.
+ */
+function dachisgroupuserstatus_theme($existing, $type, $theme, $path) {
+  return array(
+    'dachisgroupuserstatus_current_status' => array(
+      'variables' => array(
+        'account' => NULL,
+        'current_status' => NULL,
+      ),
+      'file' => 'dachisgroupuserstatus.theme.inc',
+      'path' => $path,
+    ),
+    'dachisgroupuserstatus_history_block' => array(
+      'variables' => array(
+        'history' => NULL,
+      ),
+      'file' => 'dachisgroupuserstatus.theme.inc',
+      'path' => $path,
+    ),
+  );
+}
