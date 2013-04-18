@@ -1,0 +1,57 @@
+<?php
+
+function dachisgroupuserstatus_menu() {
+
+	$items = array();
+
+	// Settings page.
+	$items['admin/dachisgroupuserstatus'] = array(
+		'title' => 'Dachis Group User Status Settings',
+		'description' => '',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('dachisgroupuserstatus_settings'),
+		'access callback' => 'user_access',
+		'access arguments' => array('dachis group user status settings access'),
+	);
+
+	return $items;
+}
+
+
+/**
+ * hook_permission
+ */
+function dachisgroupuserstatus_permission() {
+	return array(
+		'view dachis group user status' => array(
+			'title' => t('View Dachis Group user status'),
+		),
+		'edit any dachis group user status' => array(
+			'title' => t('Edit any Dachis Group user status'),
+		),
+		'edit own dachis group user status' => array(
+			'title' => t('Edit own Dachis Group user status'),
+		),
+		'administer dachis group user status' => array(
+			'title' => t('Administer Dachis Group user status'),
+		),
+	);
+}
+
+
+/**
+ * Settings Form
+ */
+function dachisgroupuserstatus_settings() {
+
+	$form['dachisgroupuserstatus_status'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Dachis Group User Status'),
+		'#default_value' => variable_get('dachisgroupuserstatus_status', '[STATUS]'),
+		'#description' => t('Dachis Group User Status Message'),
+	);
+
+	return system_settings_form($form);
+}
+
+
