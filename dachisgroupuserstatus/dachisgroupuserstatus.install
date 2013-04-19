@@ -1,0 +1,21 @@
+<?php
+
+function dachisgroupuserstatus_install() {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      db_query("CREATE TABLE `dachisgroupuserstatus` (
+        id int(11) unsigned NOT NULL AUTO_INCREMENT,
+        uid int(11) unsigned NOT NULL,
+        status varchar(255) NOT NULL DEFAULT '',
+        created int(11) NOT NULL,
+        PRIMARY KEY (`id`)
+      );");
+      break;
+      //
+      /* Don't have create table syntax for postgres
+    case 'pgsql':
+      break;
+      */
+  }
+}
