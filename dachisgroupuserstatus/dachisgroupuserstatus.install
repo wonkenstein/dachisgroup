@@ -7,29 +7,29 @@ function dachisgroupuserstatus_install() {
 
 function dachisgroupuserstatus_schema() {
   $schema['dachisgroupuserstatus'] = array(
-    'description' => 'TODO: please describe this table!',
+    'description' => 'Dachis Group User Status',
     'fields' => array(
       'id' => array(
-        'description' => 'TODO: please describe this field!',
+        'description' => 'id',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
       'uid' => array(
-        'description' => 'TODO: please describe this field!',
+        'description' => 'User ID',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
       'status' => array(
-        'description' => 'TODO: please describe this field!',
+        'description' => 'User Status',
         'type' => 'varchar',
         'length' => '255',
         'not null' => TRUE,
         'default' => '',
       ),
       'created' => array(
-        'description' => 'TODO: please describe this field!',
+        'description' => 'Timestamp of creation',
         'type' => 'int',
         'not null' => TRUE,
       ),
