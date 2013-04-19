@@ -217,7 +217,7 @@ function dachisgroupuserstatus_settings() {
   $form['dachisgroupuserstatus_status'] = array(
     '#type' => 'textfield',
     '#title' => t('Dachis Group User Status'),
-    '#default_value' => variable_get('dachisgroupuserstatus_status', '[STATUS]'),
+    '#default_value' => variable_get('dachisgroupuserstatus_status', '[CURRENT STATUS IS]'),
     '#description' => t('Dachis Group User Status Message'),
   );
 

@@ -23,7 +23,7 @@ function theme_dachisgroupuserstatus_current_status($vars) {
     $name = $account->field_firstname['und'][0]['safe_value'] . ' ' . $account->field_lastname['und'][0]['safe_value'];
   }
 
-  $status_message = variable_get('dachisgroupuserstatus_status', '[STATUS]');
+  $status_message = variable_get('dachisgroupuserstatus_status', '[CURRENT STATUS IS]');
 
   return $name . ' ' . $status_message . ' ' . $current_status->status;
 }
