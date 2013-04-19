@@ -1,6 +1,9 @@
 dachisgroup
 ===========
 
+Brief/Spec
+----------
+
 Current User Status Module
 
 Create a Drupal module in either Drupal 6 or 7 to fulfil the following criteria.
@@ -26,3 +29,35 @@ Bonus points
 need to go to their profile page.
 2. Use the Views module to create the recent status block.
 3. Create a cron task to purge older values from the user status database table.
+
+
+
+Notes
+-----
+Drupal 7 module, requires views module.
+Turn it on and dachisgroupuserstatus table should be created in database by hook_schema.
+status_setting
+
+admin/config/people/dachisgroupuserstatus
+Can change the text 'is currently' in the John Appleseed 'is currently' [STATUS]
+John Appleseed assumed to be available as part of user profile configuration
+Checkbox to toggle display of status for users profile - sitewide.
+
+user/%user/dachisgroupuserstatus
+Users can update their own statuses and history kept in dachisgroupuserstatus table
+Roles can be configured so they can update all other user statuses if required.
+
+Blocks Available
+Recent Status History Block
+List of 10 most recent statuses
+
+Update User Status Block
+Able to update user status in a block and done via AJAX
+
+User Status History :: Views
+List of 10 most recent statuses - configured using views
+
+hook_cron
+cron function that deletes statuses that are older than 28 days - should make this configurable
+
+
