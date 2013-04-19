@@ -1,21 +1,41 @@
 <?php
 
 function dachisgroupuserstatus_install() {
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      db_query("CREATE TABLE `dachisgroupuserstatus` (
-        id int(11) unsigned NOT NULL AUTO_INCREMENT,
-        uid int(11) unsigned NOT NULL,
-        status varchar(255) NOT NULL DEFAULT '',
-        created int(11) NOT NULL,
-        PRIMARY KEY (`id`)
-      );");
-      break;
-      //
-      /* Don't have create table syntax for postgres
-    case 'pgsql':
-      break;
-      */
-  }
+
+}
+
+
+function dachisgroupuserstatus_schema() {
+  $schema['dachisgroupuserstatus'] = array(
+    'description' => 'TODO: please describe this table!',
+    'fields' => array(
+      'id' => array(
+        'description' => 'TODO: please describe this field!',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'description' => 'TODO: please describe this field!',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'created' => array(
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
 }
