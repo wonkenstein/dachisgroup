@@ -138,6 +138,10 @@ function dachisgroupuserstatus_block_info() {
   $blocks['dachisgroupuserstatus_history'] = array(
     'info' => t('Dachis Group User Status History'),
   );
+
+  $blocks['dachisgroupuserstatus_update'] = array(
+    'info' => t('Dachis Group User Status Update Form'),
+  );
   return $blocks;
 }
 
@@ -150,8 +154,44 @@ function dachisgroupuserstatus_block_view($delta = '') {
       $block['subject'] = t('User Status History');
       $block['content'] = dachisgroupuserstatus_history_block();
       break;
+
+    case 'dachisgroupuserstatus_update':
+      $block['subject'] = t('Update User Status');
+      $block['content'] = drupal_get_form('dachisgroupuserstatus_update_form');
+      break;
   }
   return $block;
+}
+
+function dachisgroupuserstatus_update_form($form, &$form_state) {
+  global $user;
+  $form = dachisgroupuserstatus_status_form($form, $form_state, $user);
+
+  $form['status']['#size'] = '28';
+  $form["wrapper"] = array("#markup" => "<div id='test-ajax'></div>");
+
+  $form['submit']['#ajax'] = array(
+      'callback' => 'dachisgroupuserstatus_update_form_ajax_callback',
+      'name' => 'dachisgroupuserstatus_update_submit',
+      'wrapper' => 'dachisgroupuserstatus-update-form',
+     );
+  return $form;
+
+}
+
+
+function dachisgroupuserstatus_update_form_ajax_callback($form, $form_state) {
+
+  // if there are errors, return form to display the error messages
+  if (form_get_errors()) {
+    return $form;
+  }
+
+  $res = dachisgroupuserstatus_status_save($form_state['values']);
+
+  // should really update the status history block as well if we can
+  return array('#markup' => '<div id="test-ajax">' . t('Status updated to ') . '"'. $form_state['values']['status'] . '"</div>');
+
 }
 
 function dachisgroupuserstatus_history_block() {
