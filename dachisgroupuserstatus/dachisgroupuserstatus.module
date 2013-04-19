@@ -120,7 +120,7 @@ function dachisgroupuserstatus_get_current_status($uid) {
   $result = db_query("SELECT uid, status, created
     FROM {dachisgroupuserstatus}
     WHERE uid=:uid ORDER BY id DESC LIMIT 1", $values);
-
+dachisgroupuserstatus_cron();
   return $result->fetch();
 }
 
@@ -281,4 +281,21 @@ function dachisgroupuserstatus_theme($existing, $type, $theme, $path) {
       'path' => $path,
     ),
   );
+}
+
+
+/**
+ * Implements hook_cron()
+ */
+function dachisgroupuserstatus_cron() {
+
+  // Delete statuses that are older than 28 days
+  // Should really make this configurable in settings page
+  $period = 60*60*24*28;
+
+  // get all the groups
+  $result = db_delete('dachisgroupuserstatus')
+  ->condition('created', date('U')-$period, '<=')
+  ->execute();
+
 }
