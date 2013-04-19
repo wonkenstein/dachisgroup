@@ -22,7 +22,6 @@ function dachisgroupuserstatus_menu() {
     'access callback' => '_dachisgroupuserstatus_access',
     'access arguments' => array(1),
     'weight' => 2,
-//    'file' => 'contact.pages.inc',
   );
 
   return $items;
@@ -92,7 +91,6 @@ function dachisgroupuserstatus_status_form($form, &$form_state, $account) {
 
 function dachisgroupuserstatus_status_form_submit($form, &$form_state) {
 
-//  drupal_set_message(print_r($form_state,1));
   $res = dachisgroupuserstatus_status_save($form_state['values']);
 
   if ($res) {
@@ -114,6 +112,7 @@ function dachisgroupuserstatus_status_save($values) {
   return db_insert('dachisgroupuserstatus')->fields($insert_values)->execute();
 }
 
+
 function dachisgroupuserstatus_get_current_status($uid) {
   $values = array(
     ':uid' => $uid,
@@ -124,6 +123,7 @@ function dachisgroupuserstatus_get_current_status($uid) {
 
   return $result->fetch();
 }
+
 
 function dachisgroupuserstatus_get_status_history($uid) {
   $result = db_query_range('SELECT id, uid, status, created
@@ -145,6 +145,7 @@ function dachisgroupuserstatus_block_info() {
   return $blocks;
 }
 
+
 function dachisgroupuserstatus_block_view($delta = '') {
   // This example is adapted from node.module.
   $block = array();
@@ -162,6 +163,7 @@ function dachisgroupuserstatus_block_view($delta = '') {
   }
   return $block;
 }
+
 
 function dachisgroupuserstatus_update_form($form, &$form_state) {
   global $user;
@@ -193,6 +195,7 @@ function dachisgroupuserstatus_update_form_ajax_callback($form, $form_state) {
   return array('#markup' => '<div id="test-ajax">' . t('Status updated to ') . '"'. $form_state['values']['status'] . '"</div>');
 
 }
+
 
 function dachisgroupuserstatus_history_block() {
   global $user;
