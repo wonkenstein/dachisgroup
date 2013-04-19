@@ -120,7 +120,7 @@ function dachisgroupuserstatus_get_current_status($uid) {
   $result = db_query("SELECT uid, status, created
     FROM {dachisgroupuserstatus}
     WHERE uid=:uid ORDER BY id DESC LIMIT 1", $values);
-dachisgroupuserstatus_cron();
+
   return $result->fetch();
 }
 
@@ -298,4 +298,8 @@ function dachisgroupuserstatus_cron() {
   ->condition('created', date('U')-$period, '<=')
   ->execute();
 
+}
+
+function dachisgroupuserstatus_views_api() {
+    return array('api'=>'3');
 }
